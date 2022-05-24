@@ -66,6 +66,9 @@ namespace GeoView
         double y_move = 0;
         double z_move = 0;
 
+        double view_width;
+        double view_height;
+
         enum drawingStates {
             None,
             Points,
@@ -110,6 +113,10 @@ namespace GeoView
             Gl.glEnable(Gl.GL_DEPTH_TEST);
             CreateFont3D(Font);
             Texture = LoadTexture(@"D:\Programing\C#\OpenGl\GeoView\GeoView\dengi.bmp");
+            this.trackBarXOriginPos.Maximum = (ClientRectangle.Width - UIPanel.Width) / 2;
+            this.trackBarZOriginPos.Maximum = ClientRectangle.Height / 2;
+            this.trackBarXOriginPos.Minimum = - (ClientRectangle.Width - UIPanel.Width) / 2;
+            this.trackBarZOriginPos.Minimum = - ClientRectangle.Height / 2;
             Form1_Resize(null, null);
         }
 
@@ -138,16 +145,17 @@ namespace GeoView
             // ToDO вычилсить центр поверзхности при знагруджен
             //Gl.glOrtho(surfaceValues.xMin, surfaceValues.xMin, surfaceValues.zMin, surfaceValues.zMax, surfaceValues.yMin, surfaceValues.yMax);
             Gl.glTranslated(x_move, y_move, z_move);
-            r = (float) Math.Sqrt(
-                (surfaceValues.xMax - surfaceValues.xMin) * (surfaceValues.xMax - surfaceValues.xMin) +
-                (surfaceValues.yMax - surfaceValues.yMin) * (surfaceValues.yMax - surfaceValues.yMin) +
-                (surfaceValues.zMax - surfaceValues.zMin) * (surfaceValues.zMax - surfaceValues.zMin)
-            );
+            //r = (float) Math.Sqrt(
+            //    (surfaceValues.xMax - surfaceValues.xMin) * (surfaceValues.xMax - surfaceValues.xMin) +
+            //    (surfaceValues.yMax - surfaceValues.yMin) * (surfaceValues.yMax - surfaceValues.yMin) +
+            //    (surfaceValues.zMax - surfaceValues.zMin) * (surfaceValues.zMax - surfaceValues.zMin)
+            //);
             Gl.glTranslatef(0, 0, -r);
             Gl.glRotatef(phi, 1f, 0, 0);
             Gl.glRotatef(psi, 0, 1f, 0);
             Gl.glScaled(x_scale_factor, y_scale_factor, z_scale_factor);
             drawOrigin();
+            Gl.glScaled(2 / (surfaceValues.xMax - surfaceValues.xMin), 2 / (surfaceValues.zMax - surfaceValues.zMin), 2 / (surfaceValues.yMax - surfaceValues.yMin));
             Gl.glTranslated(-Math.Abs(x_origin), -Math.Abs(z_origin), -Math.Abs(y_origin));
             DrawScene();
             Gl.glViewport(0, 0, w, h);

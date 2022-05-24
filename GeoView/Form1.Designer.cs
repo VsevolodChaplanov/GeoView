@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             this.UIPanel = new System.Windows.Forms.Panel();
+            this.PointsColor = new System.Windows.Forms.Button();
+            this.SurfaceColor = new System.Windows.Forms.Button();
+            this.MeshColor = new System.Windows.Forms.Button();
             this.checkBoxTexture = new System.Windows.Forms.CheckBox();
             this.labelAlpha = new System.Windows.Forms.Label();
             this.labelTransparency = new System.Windows.Forms.Label();
@@ -60,9 +63,6 @@
             this.trackBarR = new System.Windows.Forms.TrackBar();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
-            this.MeshColor = new System.Windows.Forms.Button();
-            this.SurfaceColor = new System.Windows.Forms.Button();
-            this.PointsColor = new System.Windows.Forms.Button();
             this.UIPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarTransparency)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarZOriginPos)).BeginInit();
@@ -115,6 +115,36 @@
             this.UIPanel.Name = "UIPanel";
             this.UIPanel.Size = new System.Drawing.Size(200, 800);
             this.UIPanel.TabIndex = 0;
+            // 
+            // PointsColor
+            // 
+            this.PointsColor.Location = new System.Drawing.Point(11, 616);
+            this.PointsColor.Name = "PointsColor";
+            this.PointsColor.Size = new System.Drawing.Size(185, 23);
+            this.PointsColor.TabIndex = 32;
+            this.PointsColor.Text = "Select points color";
+            this.PointsColor.UseVisualStyleBackColor = true;
+            this.PointsColor.Click += new System.EventHandler(this.PointsColor_Click);
+            // 
+            // SurfaceColor
+            // 
+            this.SurfaceColor.Location = new System.Drawing.Point(11, 674);
+            this.SurfaceColor.Name = "SurfaceColor";
+            this.SurfaceColor.Size = new System.Drawing.Size(185, 23);
+            this.SurfaceColor.TabIndex = 31;
+            this.SurfaceColor.Text = "Select surface color";
+            this.SurfaceColor.UseVisualStyleBackColor = true;
+            this.SurfaceColor.Click += new System.EventHandler(this.SurfaceColor_Click);
+            // 
+            // MeshColor
+            // 
+            this.MeshColor.Location = new System.Drawing.Point(11, 645);
+            this.MeshColor.Name = "MeshColor";
+            this.MeshColor.Size = new System.Drawing.Size(185, 23);
+            this.MeshColor.TabIndex = 30;
+            this.MeshColor.Text = "Select mesh color";
+            this.MeshColor.UseVisualStyleBackColor = true;
+            this.MeshColor.Click += new System.EventHandler(this.MeshColor_Click);
             // 
             // checkBoxTexture
             // 
@@ -404,36 +434,6 @@
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // MeshColor
-            // 
-            this.MeshColor.Location = new System.Drawing.Point(11, 645);
-            this.MeshColor.Name = "MeshColor";
-            this.MeshColor.Size = new System.Drawing.Size(185, 23);
-            this.MeshColor.TabIndex = 30;
-            this.MeshColor.Text = "Select mesh color";
-            this.MeshColor.UseVisualStyleBackColor = true;
-            this.MeshColor.Click += new System.EventHandler(this.MeshColor_Click);
-            // 
-            // SurfaceColor
-            // 
-            this.SurfaceColor.Location = new System.Drawing.Point(11, 674);
-            this.SurfaceColor.Name = "SurfaceColor";
-            this.SurfaceColor.Size = new System.Drawing.Size(185, 23);
-            this.SurfaceColor.TabIndex = 31;
-            this.SurfaceColor.Text = "Select surface color";
-            this.SurfaceColor.UseVisualStyleBackColor = true;
-            this.SurfaceColor.Click += new System.EventHandler(this.SurfaceColor_Click);
-            // 
-            // PointsColor
-            // 
-            this.PointsColor.Location = new System.Drawing.Point(11, 616);
-            this.PointsColor.Name = "PointsColor";
-            this.PointsColor.Size = new System.Drawing.Size(185, 23);
-            this.PointsColor.TabIndex = 32;
-            this.PointsColor.Text = "Select points color";
-            this.PointsColor.UseVisualStyleBackColor = true;
-            this.PointsColor.Click += new System.EventHandler(this.PointsColor_Click);
             // 
             // Form1
             // 
