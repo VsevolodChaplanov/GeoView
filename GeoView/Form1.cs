@@ -21,7 +21,6 @@ using Tao.OpenGl;
 //  *GDI
 //  *User
 using Tao.Platform.Windows;
-using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
 
@@ -62,6 +61,11 @@ namespace GeoView
         double y_origin = 0;
         double z_origin = 0;
 
+        //
+        double x_move = 0;
+        double y_move = 0;
+        double z_move = 0;
+
         enum drawingStates {
             None,
             Points,
@@ -74,6 +78,13 @@ namespace GeoView
         bool istexture = false;
 
         drawingStates drawState;
+
+        Color meshcolor = Color.Red;
+        Color surfacecolor = Color.Blue;
+        Color pointscolor = Color.Black;
+
+        int w;
+        int h;
 
         public Form1()
         {
@@ -112,9 +123,9 @@ namespace GeoView
             Gl.glMatrixMode(Gl.GL_PROJECTION);
             Gl.glLoadIdentity();
             // Properties of the WinForm
-            int w = ClientRectangle.Width - UIPanel.Width;
-            int h = ClientRectangle.Height;
-            Glu.gluPerspective(30, (double)w / h, 2, 20000);
+            w = ClientRectangle.Width - UIPanel.Width;
+            h = ClientRectangle.Height;
+            Glu.gluPerspective(30, (double)w / h, 2, 200000);
             Gl.glViewport(0, 0, w, h);
         }
 
@@ -125,15 +136,21 @@ namespace GeoView
             Gl.glMatrixMode(Gl.GL_MODELVIEW);
             Gl.glLoadIdentity();
             // ToDO вычилсить центр поверзхности при знагруджен
-            Gl.glTranslated(x_origin, y_origin, z_origin);
+            //Gl.glOrtho(surfaceValues.xMin, surfaceValues.xMin, surfaceValues.zMin, surfaceValues.zMax, surfaceValues.yMin, surfaceValues.yMax);
+            Gl.glTranslated(x_move, y_move, z_move);
+            r = (float) Math.Sqrt(
+                (surfaceValues.xMax - surfaceValues.xMin) * (surfaceValues.xMax - surfaceValues.xMin) +
+                (surfaceValues.yMax - surfaceValues.yMin) * (surfaceValues.yMax - surfaceValues.yMin) +
+                (surfaceValues.zMax - surfaceValues.zMin) * (surfaceValues.zMax - surfaceValues.zMin)
+            );
             Gl.glTranslatef(0, 0, -r);
             Gl.glRotatef(phi, 1f, 0, 0);
             Gl.glRotatef(psi, 0, 1f, 0);
-
             Gl.glScaled(x_scale_factor, y_scale_factor, z_scale_factor);
-
+            drawOrigin();
+            Gl.glTranslated(-Math.Abs(x_origin), -Math.Abs(z_origin), -Math.Abs(y_origin));
             DrawScene();
-
+            Gl.glViewport(0, 0, w, h);
             Gl.glFinish();
             Gdi.SwapBuffers(HDC3D);
         }
@@ -194,35 +211,11 @@ namespace GeoView
 
         private void DrawScene()
         {
-            drawOrigin();
+            Gl.glEnable(Gl.GL_BLEND);
+            Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA);
             if (fileName == null)
             {
                 return;
-            }
-            if (drawState == drawingStates.None)
-            {
-            }
-            if (drawState == drawingStates.Points)
-            {
-                drawSurfacePoints();
-            }
-            if (istexture)
-            {
-                addTexture();
-                return;
-            }
-
-            Gl.glEnable(Gl.GL_BLEND);
-            Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA);
-
-            if (drawState == drawingStates.Rectangles || drawState == drawingStates.RectsQuads)
-            {
-                Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_LINE);
-                Gl.glEnable(Gl.GL_POLYGON_OFFSET_FILL);
-                Gl.glPolygonOffset(1.0f, 1.0f);
-                Gl.glColor4d(1.0, 0.0, 0.0, transparancy);
-                drawSurface();
-                Gl.glDisable(Gl.GL_POLYGON_OFFSET_FILL);
             }
             if (lightning_state)
             {
@@ -238,16 +231,35 @@ namespace GeoView
                 Gl.glLightModeli(Gl.GL_LIGHT_MODEL_TWO_SIDE, 1);
                 // -----------------------------------------------------------------------------
             }
+            if (istexture)
+            {
+                Gl.glEnable(Gl.GL_TEXTURE_2D);
+                Gl.glTexEnvf(Gl.GL_TEXTURE_ENV, Gl.GL_TEXTURE_ENV_MODE, Gl.GL_DECAL);
+                Gl.glBindTexture(Gl.GL_TEXTURE_2D, Texture);
+            }
+            if (drawState == drawingStates.Points)
+            {
+                Gl.glColor4d((double)pointscolor.R / 255, (double)pointscolor.G / 255, (double) pointscolor.B / 255, transparancy);
+                drawSurfacePoints();
+            }
+            if (drawState == drawingStates.Rectangles || drawState == drawingStates.RectsQuads)
+            {
+                Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_LINE);
+                Gl.glEnable(Gl.GL_POLYGON_OFFSET_FILL);
+                Gl.glPolygonOffset(1.0f, 1.0f);
+                Gl.glColor4d((double)meshcolor.R / 255, (double)meshcolor.G / 255, (double)meshcolor.B / 255, transparancy);
+                drawSurface();
+                Gl.glDisable(Gl.GL_POLYGON_OFFSET_FILL);
+            }
             if (drawState == drawingStates.FilledQuads || drawState == drawingStates.RectsQuads)
             {
                 Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL);
-                Gl.glColor4d(0.0, 1.0, 0.0, transparancy);
+                Gl.glColor4d((double)surfacecolor.R / 255, (double)surfacecolor.G / 255, (double)surfacecolor.B / 255, transparancy);
                 Gl.glEnable(Gl.GL_POLYGON_OFFSET_FILL);
                 drawSurface();
                 Gl.glDisable(Gl.GL_BLEND);
                 Gl.glDisable(Gl.GL_POLYGON_OFFSET_FILL);
             }
-
             if (lightning_state)
             {
                 // ----------- Отключение освещения -----------
@@ -256,15 +268,15 @@ namespace GeoView
                 Gl.glDisable(Gl.GL_COLOR_MATERIAL);
                 // --------------------------------------------
             }
+            if (istexture)
+            {
+                Gl.glDisable(Gl.GL_TEXTURE_2D);
+            }
             Gl.glDisable(Gl.GL_BLEND);
         }
 
-        private void addTexture()
+        private void drawSurface()
         {
-            Gl.glEnable(Gl.GL_TEXTURE_2D);
-            Gl.glTexEnvf(Gl.GL_TEXTURE_ENV, Gl.GL_TEXTURE_ENV_MODE, Gl.GL_DECAL);
-            Gl.glBindTexture(Gl.GL_TEXTURE_2D, Texture);
-
             if (fileName == null)
             {
                 return;
@@ -403,9 +415,16 @@ namespace GeoView
                     double x = (surfaceValues.xMin + i * hx);
                     double y = (surfaceValues.yMin + j * hy);
                     double z = (surfaceValues.funcValues[Index(i, j)]);
+
+                    List<double> normal = surfaceValues.derivatives[Index(i, j)];
                     Gl.glBegin(Gl.GL_POINTS);
                     Gl.glPointSize(3);
                     setGlColor(z);
+                    Gl.glNormal3d(
+                       normal[0],
+                       normal[1],
+                       normal[2]
+                       );
                     Gl.glVertex3d(
                         x,
                         z,
@@ -419,90 +438,6 @@ namespace GeoView
         {
             int result = i + j * surfaceValues.Nx;
             return result;
-        }
-
-        private void drawSurface()
-        {
-            if (fileName == null)
-            {
-                return;
-            }
-            double hx = (surfaceValues.xMax - surfaceValues.xMin) / (surfaceValues.Nx - 1);
-            double hy = (surfaceValues.yMax - surfaceValues.yMin) / (surfaceValues.Ny - 1);
-
-            for (int j = 0; j < surfaceValues.Ny - 1; j++)
-            {
-                for (int i = 0; i < surfaceValues.Nx - 1; i++)
-                {
-                    double x_init = (surfaceValues.xMin + i * hx);
-                    double y_init = (surfaceValues.yMin + j * hy);
-
-                    double x_init_1 = x_init + hx;
-                    double y_init_1 = y_init + hy;
-
-                    double z1 = surfaceValues.funcValues[Index(i, j)];
-                    double z2 = surfaceValues.funcValues[Index(i + 1, j)];
-                    double z3 = surfaceValues.funcValues[Index(i + 1, j + 1)];
-                    double z4 = surfaceValues.funcValues[Index(i, j + 1)];
-
-                    List<double> normals_1 = surfaceValues.derivatives[Index(i, j)];
-                    List<double> normals_2 = surfaceValues.derivatives[Index(i + 1, j)];
-                    List<double> normals_3 = surfaceValues.derivatives[Index(i + 1, j + 1)];
-                    List<double> normals_4 = surfaceValues.derivatives[Index(i, j + 1)];
-
-                    Gl.glBegin(Gl.GL_QUADS);
-
-                    setGlColor(z1);
-                    Gl.glNormal3d(
-                        normals_1[0],
-                        normals_1[1],
-                        normals_1[2]
-                        );                 
-                    Gl.glVertex3d(
-                        x_init,
-                        z1,
-                        y_init
-                        );
-
-                    setGlColor(z4);
-                    Gl.glNormal3d(
-                        normals_4[0],
-                        normals_4[1],
-                        normals_4[2]
-                        );
-                    Gl.glVertex3d(
-                        x_init,
-                        z4,
-                        y_init_1
-                        );
-
-                    setGlColor(z3);
-                    Gl.glNormal3d(
-                        normals_3[0],
-                        normals_3[1],
-                        normals_3[2]
-                        );
-                    Gl.glVertex3d(
-                        x_init_1,
-                        z3,
-                        y_init_1
-                        );
-
-                    setGlColor(z2);
-                    Gl.glNormal3d(
-                        normals_2[0],
-                        normals_2[1],
-                        normals_2[2]
-                        );
-                    Gl.glVertex3d(
-                        x_init_1,
-                        z2,
-                        y_init
-                        );
-
-                    Gl.glEnd();
-                }
-            }
         }
 
         private void trackBarR_Scroll(object sender, EventArgs e)
@@ -526,6 +461,9 @@ namespace GeoView
         private void Parse()
         {
             this.surfaceValues = GRDParser.ParseFile(fileName);
+            x_origin = (surfaceValues.xMax + surfaceValues.xMin) / 2;
+            y_origin = (surfaceValues.yMax + surfaceValues.yMin) / 2;
+            z_origin = (surfaceValues.zMax + surfaceValues.zMin) / 2;
         }
 
         private void OpenFile_Click(object sender, EventArgs e)
@@ -589,19 +527,19 @@ namespace GeoView
 
         private void trackBarXOriginPos_Scroll(object sender, EventArgs e)
         {
-            x_origin = trackBarXOriginPos.Value / 10.0f;
+            x_move = trackBarXOriginPos.Value / 10.0f;
             InvalidateRect();
         }
 
         private void trackBarYOriginPos_Scroll(object sender, EventArgs e)
         {
-            z_origin = trackBarYOriginPos.Value / 10.0f;
+            z_move = trackBarYOriginPos.Value / 10.0f;
             InvalidateRect();
         }
 
         private void trackBarZOriginPos_Scroll(object sender, EventArgs e)
         {
-            y_origin = trackBarZOriginPos.Value / 10.0f;
+            y_move = trackBarZOriginPos.Value / 10.0f;
             InvalidateRect();
         }
 
@@ -667,6 +605,33 @@ namespace GeoView
         private void checkBoxTexture_CheckedChanged(object sender, EventArgs e)
         {
             istexture = checkBoxTexture.Checked;
+            InvalidateRect();
+        }
+
+        private void PointsColor_Click(object sender, EventArgs e)
+        {
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+            {
+                this.pointscolor = colorDialog.Color;
+            }
+            InvalidateRect();
+        }
+
+        private void MeshColor_Click(object sender, EventArgs e)
+        {
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+            {
+                this.meshcolor = colorDialog.Color;
+            }
+            InvalidateRect();
+        }
+
+        private void SurfaceColor_Click(object sender, EventArgs e)
+        {
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+            {
+                this.surfacecolor = colorDialog.Color;
+            }
             InvalidateRect();
         }
     }
