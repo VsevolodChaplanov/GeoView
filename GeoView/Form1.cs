@@ -46,6 +46,7 @@ namespace GeoView
         // Texture
         // uint Texture = LoadTexture(@"D:\Programing\C#\OpenGl\GeoView\GeoView\Grani2.bmp");
         uint Texture = 0;
+        string texturefilename;
         string fileName;
         private GVContainer surfaceValues = new GVContainer();
 
@@ -112,7 +113,7 @@ namespace GeoView
             Wgl.wglMakeCurrent(HDC3D, HRC3D);
             Gl.glEnable(Gl.GL_DEPTH_TEST);
             CreateFont3D(Font);
-            Texture = LoadTexture(@"D:\Programing\C#\OpenGl\GeoView\GeoView\dengi.bmp");
+            //Texture = LoadTexture(@"D:\Programing\C#\OpenGl\GeoView\GeoView\dengi.bmp");
             this.trackBarXOriginPos.Maximum = (ClientRectangle.Width - UIPanel.Width) / 2;
             this.trackBarZOriginPos.Maximum = ClientRectangle.Height / 2;
             this.trackBarXOriginPos.Minimum = - (ClientRectangle.Width - UIPanel.Width) / 2;
@@ -239,7 +240,7 @@ namespace GeoView
                 Gl.glLightModeli(Gl.GL_LIGHT_MODEL_TWO_SIDE, 1);
                 // -----------------------------------------------------------------------------
             }
-            if (istexture)
+            if (Texture != 0 && istexture)
             {
                 Gl.glEnable(Gl.GL_TEXTURE_2D);
                 Gl.glTexEnvf(Gl.GL_TEXTURE_ENV, Gl.GL_TEXTURE_ENV_MODE, Gl.GL_DECAL);
@@ -610,11 +611,11 @@ namespace GeoView
             return texObject;
         }
 
-        private void checkBoxTexture_CheckedChanged(object sender, EventArgs e)
-        {
-            istexture = checkBoxTexture.Checked;
-            InvalidateRect();
-        }
+        //private void checkBoxTexture_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    istexture = checkBoxTexture.Checked;
+        //    InvalidateRect();
+        //}
 
         private void PointsColor_Click(object sender, EventArgs e)
         {
@@ -640,6 +641,22 @@ namespace GeoView
             {
                 this.surfacecolor = colorDialog.Color;
             }
+            InvalidateRect();
+        }
+
+        private void TextureLoad_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                texturefilename = openFileDialog1.FileName;
+            }
+            Texture = LoadTexture(texturefilename);
+            InvalidateRect();
+        }
+
+        private void checkBoxTexture_CheckedChanged(object sender, EventArgs e)
+        {
+            istexture = checkBoxTexture.Checked;
             InvalidateRect();
         }
     }

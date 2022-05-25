@@ -32,7 +32,6 @@
             this.PointsColor = new System.Windows.Forms.Button();
             this.SurfaceColor = new System.Windows.Forms.Button();
             this.MeshColor = new System.Windows.Forms.Button();
-            this.checkBoxTexture = new System.Windows.Forms.CheckBox();
             this.labelAlpha = new System.Windows.Forms.Label();
             this.labelTransparency = new System.Windows.Forms.Label();
             this.trackBarTransparency = new System.Windows.Forms.TrackBar();
@@ -63,6 +62,8 @@
             this.trackBarR = new System.Windows.Forms.TrackBar();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
+            this.TextureLoad = new System.Windows.Forms.Button();
+            this.checkBoxTexture = new System.Windows.Forms.CheckBox();
             this.UIPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarTransparency)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarZOriginPos)).BeginInit();
@@ -78,10 +79,11 @@
             // 
             // UIPanel
             // 
+            this.UIPanel.Controls.Add(this.checkBoxTexture);
+            this.UIPanel.Controls.Add(this.TextureLoad);
             this.UIPanel.Controls.Add(this.PointsColor);
             this.UIPanel.Controls.Add(this.SurfaceColor);
             this.UIPanel.Controls.Add(this.MeshColor);
-            this.UIPanel.Controls.Add(this.checkBoxTexture);
             this.UIPanel.Controls.Add(this.labelAlpha);
             this.UIPanel.Controls.Add(this.labelTransparency);
             this.UIPanel.Controls.Add(this.trackBarTransparency);
@@ -146,17 +148,6 @@
             this.MeshColor.UseVisualStyleBackColor = true;
             this.MeshColor.Click += new System.EventHandler(this.MeshColor_Click);
             // 
-            // checkBoxTexture
-            // 
-            this.checkBoxTexture.AutoSize = true;
-            this.checkBoxTexture.Location = new System.Drawing.Point(12, 760);
-            this.checkBoxTexture.Name = "checkBoxTexture";
-            this.checkBoxTexture.Size = new System.Drawing.Size(54, 17);
-            this.checkBoxTexture.TabIndex = 29;
-            this.checkBoxTexture.Text = "Dengi";
-            this.checkBoxTexture.UseVisualStyleBackColor = true;
-            this.checkBoxTexture.CheckedChanged += new System.EventHandler(this.checkBoxTexture_CheckedChanged);
-            // 
             // labelAlpha
             // 
             this.labelAlpha.AutoSize = true;
@@ -188,7 +179,7 @@
             // checkBoxColoring
             // 
             this.checkBoxColoring.AutoSize = true;
-            this.checkBoxColoring.Location = new System.Drawing.Point(12, 737);
+            this.checkBoxColoring.Location = new System.Drawing.Point(12, 775);
             this.checkBoxColoring.Name = "checkBoxColoring";
             this.checkBoxColoring.Size = new System.Drawing.Size(64, 17);
             this.checkBoxColoring.TabIndex = 25;
@@ -262,7 +253,7 @@
             // checkBox_lightning
             // 
             this.checkBox_lightning.AutoSize = true;
-            this.checkBox_lightning.Location = new System.Drawing.Point(12, 714);
+            this.checkBox_lightning.Location = new System.Drawing.Point(12, 752);
             this.checkBox_lightning.Name = "checkBox_lightning";
             this.checkBox_lightning.Size = new System.Drawing.Size(69, 17);
             this.checkBox_lightning.TabIndex = 17;
@@ -435,6 +426,27 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // TextureLoad
+            // 
+            this.TextureLoad.Location = new System.Drawing.Point(94, 727);
+            this.TextureLoad.Name = "TextureLoad";
+            this.TextureLoad.Size = new System.Drawing.Size(75, 23);
+            this.TextureLoad.TabIndex = 33;
+            this.TextureLoad.Text = "Load texture";
+            this.TextureLoad.UseVisualStyleBackColor = true;
+            this.TextureLoad.Click += new System.EventHandler(this.TextureLoad_Click);
+            // 
+            // checkBoxTexture
+            // 
+            this.checkBoxTexture.AutoSize = true;
+            this.checkBoxTexture.Location = new System.Drawing.Point(12, 729);
+            this.checkBoxTexture.Name = "checkBoxTexture";
+            this.checkBoxTexture.Size = new System.Drawing.Size(62, 17);
+            this.checkBoxTexture.TabIndex = 34;
+            this.checkBoxTexture.Text = "Texture";
+            this.checkBoxTexture.UseVisualStyleBackColor = true;
+            this.checkBoxTexture.CheckedChanged += new System.EventHandler(this.checkBoxTexture_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -496,10 +508,11 @@
         private System.Windows.Forms.Label labelAlpha;
         private System.Windows.Forms.Label labelTransparency;
         private System.Windows.Forms.TrackBar trackBarTransparency;
-        private System.Windows.Forms.CheckBox checkBoxTexture;
         private System.Windows.Forms.Button PointsColor;
         private System.Windows.Forms.Button SurfaceColor;
         private System.Windows.Forms.Button MeshColor;
+        private System.Windows.Forms.Button TextureLoad;
+        private System.Windows.Forms.CheckBox checkBoxTexture;
     }
 }
 
